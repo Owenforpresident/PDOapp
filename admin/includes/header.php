@@ -1,20 +1,18 @@
 <?php 
 //Open ob_start and session_start functions
     ob_start();
-    session_start();
+    session_start(); //session is started on the header so its always ready/available to us once the any pageloas (this is part of every page)
 ?>
   
 <?php 
-if(isset($_SESSION['user_is_logged_in'])){       
-
-}else {  
-    header("Location: logout.php");
-}
+    if(isset($_SESSION['user_is_logged_in'])){    //if the session "user_is_logged_in" is set 
+        }  else {  
+                header("Location: logout.php");
+            }
 
 ?>
     <html>
     <head>
-        
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -31,57 +29,42 @@ if(isset($_SESSION['user_is_logged_in'])){
         <link href="font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
     </head>
-    
-    <body style="padding-top: 30px;">            
-    <nav class="navbar navbar-default navbar-fixed-top navbar-inverse">
+<body style="padding-top: 30px;">            
+<nav class="navbar navbar-default navbar-fixed-top navbar-inverse">
 
-        <div class="container-fluid" >
-
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a class="navbar-brand navbar-light" href="customers.php" style="color: #f3f3f3">CUS <strong>MANAGER</strong></a>
-            </div>
-
-            <div class="collapse navbar-collapse" id="navbar-collapse">
-
-                <ul class="nav navbar-nav navbar-left">
-                    <li><a href=""></a></li>
-                </ul>
-                
-             <?php if(isset($_SESSION['user_is_logged_in'])){
-    
-                 $fullname  = $_SESSION['user_data']['fullname'];
-                 $image     = $_SESSION['user_data']['image']; 
-    
-                } 
-                ?>
-               
-               
-                <ul class="nav navbar-nav navbar-right">
-                 <li class="navbar-text">Welcome, <?php echo $fullname ?> </li>
-                  <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown"></b>
-                        <?php echo $image ; ?></a>
-                                <ul class="dropdown-menu">
-                                    <li><a href="my_admin.php"><i class="fa fa-cog"></i> Account</a></li>
-                                    <li class="divider"></li>
-                                    <li><a href="logout.php"><i class="fa fa-sign-out"></i> Sign-out</a></li>
-                                </ul>
+<div class="container-fluid" >
+    <div class="navbar-header">0
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand navbar-light" href="customers.php" style="color: #f3f3f3">CUS <strong>MANAGER</strong></a>
+</div>
+        <div class="collapse navbar-collapse" id="navbar-collapse">
+            <ul class="nav navbar-nav navbar-left">
+                <li><a href=""></a></li>
+            </ul>
+            <?php if(isset($_SESSION['user_is_logged_in'])){
+                $fullname  = $_SESSION['user_data']['fullname'];
+                $image     = $_SESSION['user_data']['image']; 
+            } 
+            ?>
+            <ul class="nav navbar-nav navbar-right">
+                <li class="navbar-text">Welcome, <?php echo $fullname ?> </li>
+                <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown"></b>
+                    <?php echo $image ; ?></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="my_admin.php"><i class="fa fa-cog"></i> Account</a></li>
+                            <li class="divider"></li>
+                            <li><a href="logout.php"><i class="fa fa-sign-out"></i> Sign-out</a></li>
+                        </ul>
                 </li>
-                  
-                </ul>
-       
-     
-
-            </div>
-
+            </ul>
         </div>
-
+    </div>
     </nav>
         
     <div class="container-fluid">

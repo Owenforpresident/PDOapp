@@ -1,64 +1,41 @@
 <?php include('includes/header.php'); ?>
 
 <?php
-
 //Include functions
 include('includes/functions.php');
-
-
-
-
 ?>
 
 <?php 
-/************** Fetching data from database using id ******************/
+/************** Fetching data from database using id in the session ******************/
 
 //require database class files
 require('includes/pdocon.php');
 
-
-//instatiating our database objects
+//instatiating the database object
 $db = new Pdocon;
 
 //Create a query to select all users to display in the table
-   
 $db->query("SELECT * FROM admin WHERE email=:email");
-
 $email  =   $_SESSION['user_data']['email'];
-
 $db->bindValue(':email', $email, PDO::PARAM_STR);
-    
 //Fetch all data and keep in a result set
 $row = $db->fetchSingle();
-
 ?>
 
-
-
-  <div class="well">
-   
-  <small class="pull-right"><a href="customers.php"> View Customers</a> </small>
- 
-  <?php  $fullname = $_SESSION['user_data']['fullname'];
-    
-    echo '<small class="pull-left" style="color:#337ab7;">' . $fullname .'  | Veiwing / Editing</small>';
-?>
-    
+<div class="well">
+    <small class="pull-right"><a href="customers.php"> View Customers</a></small>
+      <?php  $fullname = $_SESSION['user_data']['fullname'];
+        echo '<small class="pull-left" style="color:#337ab7;">' . $fullname .'  | Veiwing / Editing</small>';
+      ?>
     <h2 class="text-center">My Account</h2> <hr>
-    <br>
-   </div>
+        <br>
+</div>
    
 <div class="container"> 
-   <div class="rows">
-     
-      <?php showmsg(); ?>
-      
+   <div class="rows">  
+      <?php showmsg(); // helper function for displaying messages, if there is one it goes here ?> 
      <div class="col-md-9">
-         
-          <?php  if($row) { ?>
-          
-          
-          
+          <?php  if($row) {  //if the database sent back details succesfully for the user in session storage then do all this php shit within the HTML?>
           <br>
            <form class="form-horizontal" role="form" method="post" action="">
             <div class="form-group">
@@ -81,7 +58,6 @@ $row = $db->fetchSingle();
              </fieldset> 
             </div>
           </div>
-
          <br>
           <div class="form-group"> 
             <div class="col-sm-offset-2 col-sm-10">
@@ -89,45 +65,36 @@ $row = $db->fetchSingle();
                 <button type="submit" class="btn btn-danger pull-right" name="delete_form">Delete</button>
             </div>
           </div>
-          
-          
-          
-        </form>
-          
+        </form> 
   </div>
        <div class="col-md-3">
            <div style="padding: 20px;">
              <div class="thumbnail" >
               <a href="edit_admin.php?admin_id=<?php echo $row['id'] ?>">
-               
                    <?php  $image = $row['image']; ?>
-               
                 <?php echo ' <img src="uploaded_image/' . $image . '"  style="width:150px;height:150px">'; ?> 
               </a>
               <h4 class="text-center"><?php //echo fullname of admin  ?></4>
             </div>
            </div>
        </div>
-       
        <?php } ?>
-       
   </div>  
 
 </div>
 
 <?php 
   
-/************** Deleting data from database when delete button is clicked ******************/  
-      
-      
-if(isset($_POST['delete_form'])){
-    
-    $admin_id = $_SESSION['user_data']['id'];
-    
-    keepmsg('<div class="alert alert-danger text-center">
-              
-              <strong>Confirm!</strong> Do you want to delete your account <br>
-              <a href="#" class="btn btn-default" data-dismiss="alert" aria-label="close">No, Thanks</a><br>
+/************** Deleting data from database when delete button is clicked ******************/   
+if(isset($_POST['delete_form'])){ //if they click the delete button on the edit profile page (my_admin)
+    $admin_id = $_SESSION['user_data']['id']; //load the user data an the ID for the user from session storage
+    keepmsg('<div class="alert alert-danger text-center"> 
+              <strong>Confirm!</strong> 
+                Are you sure you wish to delete your account?
+                <br>
+              <a href="#" class="btn btn-default" data-dismiss="alert" aria-label="close">
+                No, Thanks</a>
+                <br>
               <form method="post" action="my_admin.php">
               <input type="hidden" value="' . $admin_id .'" name="id"><br>
               <input type="submit" name="delete_admin" value="Yes, Delete" class="btn btn-danger">
@@ -135,53 +102,23 @@ if(isset($_POST['delete_form'])){
             </div>');
     
 }        
-
-
-
-
-//If the Yes Delete (confim delete) button is click from the closable div proceed to delete
-
-
-   if(isset($_POST['delete_admin'])){
-       
-    $id = $_POST['id'];
-           
-    $db->query('DELETE FROM admin WHERE id=:id');
-       
-    $db->bindValue(':id', $id, PDO::PARAM_INT);
-       
-    $run = $db->execute();
-       
-    if($run){
-        
-        redirect('logout.php');
-        
-    }else{
-        
-         keepmsg('<div class="alert alert-danger text-center">
-                      <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                      <strong>Sorry </strong>User with ID ' . $id . ' Could not be deleted 
-                </div>');
-    }
-       
-       
-   }
-
-
-    
-    
-
-        
-      
+    //If they click Yes Delete (confim delete) button 
+    if(isset($_POST['delete_admin'])){ //if delete admin is set, 
+          $id = $_POST['id'];          // make a post request send along the id
+          $db->query('DELETE FROM admin WHERE id=:id');      //SQL for that id and delete that corresponding user
+          $db->bindValue(':id', $id, PDO::PARAM_INT);       //bind id iwth id placeholder
+          $run = $db->execute();      
+      if($run){        //if it runs redirect them
+          redirect('logout.php');       
+          } else{       
+              keepmsg('<div class="alert alert-danger text-center">
+                            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                            <strong>Sorry </strong>User with ID ' . $id . ' Could not be deleted 
+                      </div>');
+          }      
+    }     
 ?>
-
-         
-         
-          
-
-</div>
- 
-</div>
-  
+    </div>
+  </div>
 </div>
 <?php include('includes/footer.php'); ?>

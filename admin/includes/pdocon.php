@@ -1,116 +1,73 @@
 <?php
 
 class Pdocon{
-    
-
-    // The connection Properties
-    
-    
+                        //PROPERTIES
+ //********************************************************************* */   
     //Localhost Db information
         private $host       = "localhost";
         private $user       = "root";
         private $pass       = "";
         private $dbnm       = "cus_app";
-//   
-
     //Handle our connection
         private $dbh;
-    
     //handle our error
         private $errmsg;
-    
     //Statement Handler
         private $stmt;
- 
+                        //CONNECTION TO DB
+//*********************************************************************** */
         
     //Method to open our connection
+ public function __construct(){
+                    
+    $dsn ="mysql:host=" . $this->host . "; dbname=" . $this->dbnm; 
 
-        public function __construct(){
+    $options = array( 
+        PDO::ATTR_PERSISTENT    => true,
+        PDO::ATTR_ERRMODE       => PDO::ERRMODE_EXCEPTION
+    );
             
-        $dsn ="mysql:host=" . $this->host . "; dbname=" . $this->dbnm; 
-    
-        $options = array( 
+    try{      
+        $this->dbh  = new PDO($dsn, $this->user, $this->pass, $options); 
+        } catch(PDOException $error){   
+            $this->errmsg = $error->getMessage();
+            echo $this->errmsg; 
+         }    
+}
+                        //HELPER FUNCTIONS 
+//*********************************************************************** */
         
-            PDO::ATTR_PERSISTENT    => true,
+    //Write query helper function using the stmt property
+    public function query($query){
+        $this->stmt = $this->dbh->prepare($query);
+    }
             
-            PDO::ATTR_ERRMODE       => PDO::ERRMODE_EXCEPTION
+    //Creating a bind function 
+    public function bindvalue($param, $value, $type){
+        $this->stmt->bindValue($param, $value, $type);
+    }
 
-        );
-            
-            try{
-                
-                $this->dbh  = new PDO($dsn, $this->user, $this->pass, $options); 
-                
-                //echo "Successfully Connected";
- 
-            }catch(PDOException $error){
-                
-                $this->errmsg = $error->getMessage();
-                
-                echo $this->errmsg;
-                
-            }
-            
-            
-        }
-            
+    //Function to execute statement
+    public function execute(){
+        return $this->stmt->execute();
+    }
 
-        
-        //Write query helper function using the stmt property
-        public function query($query){
-            
-            $this->stmt = $this->dbh->prepare($query);
-            
-        }
-        
+    //Function to check if statement was successfully executed
+    public function confirm_result(){
+        $this->dbh->lastInsertId();
+    }
 
-        //Creating a bind function 
-        public function bindvalue($param, $value, $type){
-            
-             $this->stmt->bindValue($param, $value, $type);
-            
-        }
-        
-
-        //Function to execute statement
-        public function execute(){
-            
-          return $this->stmt->execute();
-            
-        }
-        
-
-        //Function to check if statement was successfully executed
-        public function confirm_result(){
-            
-            $this->dbh->lastInsertId();
-            
-        }
-        
-        //Command to fetch data in a result set in associative array
-        public function fetchMultiple(){
-            
+    //Command to fetch data in a result set in associative array
+    public function fetchMultiple(){
         $this->execute();    
-            
         return $this->stmt->fetchAll(PDO::FETCH_ASSOC);    
-            
-        }
+    }
 
-        //Command count fetched data in a result set 
-        
-        public function fetchSingle(){
-            
+    //Command count fetched data in a result set 
+    public function fetchSingle(){
         $this->execute();    
-            
         return $this->stmt->fetch(PDO::FETCH_ASSOC);    
-            
-        }
-        
-    
-}    
-
-
-
-
-
-?>
+    }
+//*********************************************************************** */
+} //END OF THE POD CONNECTION CLASS
+?> 
