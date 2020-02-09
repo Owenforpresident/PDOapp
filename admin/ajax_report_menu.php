@@ -1,54 +1,25 @@
 <?php include('includes/header.php'); ?>
-
-
 <?php
-
 //Include functions
 include('includes/functions.php');
-
 ?>
-
-
-
-<?php 
-
+<?php  
 /****************Getting  report menu to ajax *******************/
-
 //Collecting id from Ajax url
-
 $id = $_GET['cid'];
-
-
 //require database class files
 require('includes/pdocon.php');
-
-
-//instatiating our database objects
+//instatiating our database object, and finding the db entry corresponding to the id sent from the jquery  in reports.php
 $db = new Pdocon;
-
-
 $db->query('SELECT * FROM users WHERE id=:id');
-
-
 $db->bindValue(':id', $id, PDO::PARAM_INT);
-
-
-$row = $db->fetchSingle();
-    
-    
-
+$row = $db->fetchSingle(); 
     //Looping through our fetched array in row vairable. This can go anywhere in the HTML tags
-    if($row){
-        
+if($row){
         $spending_amount = $row['spending'];
-        
         $total_orders = 100;
-        
         $total_amt_spent = $spending_amount * $total_orders;
-        
         $average_amt_spent = ($total_amt_spent) / ($total_orders);
-        
-        
         echo '<div class="col-lg-4 col-md-6">
                         <div class="panel panel-yellow">
                             <div class="panel-heading">
@@ -71,8 +42,6 @@ $row = $db->fetchSingle();
                             </a>
                         </div>
                     </div>
-
-
                     <div class="col-lg-4 col-md-6">
                         <div class="panel panel-red">
                             <div class="panel-heading">
@@ -119,10 +88,4 @@ $row = $db->fetchSingle();
                         </div>
                     </div>';
     }
-
-
-
-
-
-
 ?>

@@ -1,55 +1,35 @@
 <?php include('includes/header.php'); ?>
 
 <?php
-
+//*************this is for editing/deleting customers */
 //Include functions
 include('includes/functions.php');
-
 ?>
 
 <?php 
 /************** Fetching data from database using id ******************/
-
-    if(isset($_GET['cus_id'])){
-
+  if(isset($_GET['cus_id'])){
         $user_id   =   $_GET['cus_id'];
      }
 
     //require database class files
     require('includes/pdocon.php');
 
-    //instatiating our database objects
-    $db = new Pdocon;
-
+    //go get the customer from the DB who corresponds to the customer id that was clicked on
     $db->query("SELECT * FROM users WHERE id =:id");
-
     $db->bindValue(':id', $user_id, PDO::PARAM_INT);
-
     $row = $db->fetchSingle();
-
-
 ?>
-
-
-
   <div class="well">
-   
-  <small class="pull-right"><a href="customers.php"> View Customers</a> </small>
- 
-<?php 
-    
-    echo '<small class="pull-left" style="color:#337ab7;">' . $_SESSION['user_data']['fullname'] . ' | Editing Customer</small>';
+    <small class="pull-right"><a href="customers.php"> View Customers</a> </small>
+      <?php 
+          echo '<small class="pull-left" style="color:#337ab7;">' . $_SESSION['user_data']['fullname'] . ' | Editing Customer</small>';
+      ?>
+    <h2 class="text-center">My Customers</h2><hr><br>
+  </div> <hr>
 
-?>
-    
-    <h2 class="text-center">My Customers</h2> <hr>
-    <br>
-   </div> <hr>
-   
-
-    
    <div class="rows">
-    <?php showmsg(); ?>
+    <?php showmsg(); // this is a form to show the current customer details and allow for edits?>
      <div class="col-md-6 col-md-offset-3">
           <?php  if($row) : ?>
           <br>
@@ -80,77 +60,52 @@ include('includes/functions.php');
              </fieldset> 
             </div>
           </div>
-
           <div class="form-group"> 
             <div class="col-sm-offset-2 col-sm-10">
               <input type="submit" class="btn btn-primary" name="update_customer" value="Update">
               <button type="submit" class="btn btn-danger pull-right" name="delete_customer">Delete</button>
             </div>
           </div>
-          
           <?php endif ;  ?>
-          
-        </form>
-          
+        </form>  
   </div>
 </div>  
 
 <?php 
 /************** Update data to database using id ******************/  
-if(isset($_POST['update_customer'])){
-    
+if(isset($_POST['update_customer'])){ //updating the customer is basically the same logic as creating one in the first place
     $raw_name           =   cleandata($_POST['name']);
     $raw_amount         =   cleandata($_POST['amount']);
     $raw_email          =   cleandata($_POST['email']);
-  
-    
     $c_name             =   sanitize($raw_name);
     $c_amount           =   valint($raw_amount);
     $c_email            =   valemail($raw_email);
-    
-    
     $db->query('UPDATE users SET full_name=:fullname, email=:email, spending=:amount WHERE id=:id');
-    
     $db->bindValue(':id',$user_id , PDO::PARAM_INT);
     $db->bindValue(':fullname',$c_name , PDO::PARAM_STR);
     $db->bindValue(':email',$c_email , PDO::PARAM_STR);
     $db->bindValue(':amount',$c_amount , PDO::PARAM_INT);
-    
-    
     $run_update = $db->execute();
     
-    if($run_update){
-        
+    if($run_update){ //if the customer is successfully updated, tell them
         redirect('customers.php');
-        
         keepmsg('<div class="alert alert-success text-center">
                       <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
                       <strong>Success!</strong> Customer updated successfully.
-                </div>');
-        
-        
-    }else{
-        
-        redirect('customers.php');
-        
-        keepmsg('<div class="alert alert-danger text-center">
-                      <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                      <strong>Success!</strong> Customer Could not be updated.
-                </div>');
-        
-    }
-    
+                </div>'); 
+                  } else{ //otherwise direct them back to the customers page with an alert of fuck yourself
+                      redirect('customers.php');
+                      keepmsg('<div class="alert alert-danger text-center">
+                                    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                                    <strong>Success!</strong> Customer Could not be updated.
+                              </div>');
+                          }
 }
 
 
 /************** Delete data from database using id ******************/ 
-
-if(isset($_POST['delete_customer'])){
-    
-   
-    
+if(isset($_POST['delete_customer'])){ //if they click delete customer, show an alert to ask fo sho?
     keepmsg('<div class="alert alert-danger text-center">
-              
               <strong>Confirm!</strong> Do you want to delete your account <br>
               <a href="#" class="btn btn-default" data-dismiss="alert" aria-label="close">No, Thanks</a><br>
               <form method="post" action="edit.php">
@@ -158,57 +113,30 @@ if(isset($_POST['delete_customer'])){
               <input type="submit" name="delete_user" value="Yes, Delete" class="btn btn-danger">
               </form>
             </div>');
-    
 }        
 
-
-
-
-//If the Yes Delete (confim delete) button is click from the closable div proceed to delete
-
-
-   if(isset($_POST['delete_user'])){
-       
-    $id = $_POST['id'];
-           
-    $db->query('DELETE FROM users WHERE id=:id');
-       
-    $db->bindValue(':id', $id, PDO::PARAM_INT);
-       
-    $run = $db->execute();
-       
-    if($run){
-        
-        redirect('customers.php');
-        
-        keepmsg('<div class="alert alert-success text-center">
-                      <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                      <strong>Sorry </strong>User successfully deleted. 
-                </div>');
-        
-    }else{
-        
-         keepmsg('<div class="alert alert-danger text-center">
-                      <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                      <strong>Sorry </strong>User with ID ' . $id . ' Could not be deleted 
-                </div>');
-    }
-       
-       
-   }
-
-
-    
-      
-
-        
-      
-?>
-
-
-</div>
- 
-</div>
+//If the Yes Delete (confim delete) button is clicked, delete the customer from DB
+if(isset($_POST['delete_user'])){
+      $id = $_POST['id'];             
+      $db->query('DELETE FROM users WHERE id=:id');         
+      $db->bindValue(':id', $id, PDO::PARAM_INT);         
+      $run = $db->execute();   
+if($run){
+    redirect('customers.php');   
+    keepmsg('<div class="alert alert-success text-center">
+                  <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                  <strong>Sorry </strong>User successfully deleted. 
+            </div>');
+          } else {              
+                keepmsg('<div class="alert alert-danger text-center">
+                            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                            <strong>Sorry </strong>User with ID ' . $id . ' Could not be deleted 
+                      </div>');
+          }  
+}
   
+?>
+</div>
+</div>
 </div>
 <?php include('includes/footer.php'); ?>

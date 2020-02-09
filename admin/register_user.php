@@ -1,97 +1,64 @@
 <?php include('includes/header.php'); ?>
-
-
 <?php
-
 //Include functions
 include('includes/functions.php');
-
-
-
 ?>
- 
- 
  
 <?php
 /************** Register new customer ******************/
-
-
 //require database class files
 require('includes/pdocon.php');
-
 
 //instatiating our database objects
 $db = new Pdocon;
 
-
-//Collect and clean values from the form
+//Collect and clean values from the form for adding new customer
 if(isset($_POST['submit_user'])){
-    
-    $raw_name           =   cleandata($_POST['name']);
+    $raw_name           =   cleandata($_POST['name']);  //basically the same as registering an admin, get values clean them
     $raw_amount         =   cleandata($_POST['amount']);
     $raw_email          =   cleandata($_POST['email']);
     $raw_password       =   cleandata($_POST['password']);
-    
-    
     $c_name             =   sanitize($raw_name);
     $c_amount           =   valint($raw_amount);
     $c_email            =   valemail($raw_email);
     $c_password         =   sanitize($raw_password);
-    
     $hashed_pass        =   hashpassword($c_password);
     
-    $db->query('SELECT * FROM  users WHERE email=:email');
-    
+    $db->query('SELECT * FROM  users WHERE email=:email'); //check if there is acustomer with the submitted email already in DB
     $db->bindValue(':email', $c_email, PDO::PARAM_STR);
-    
      $row = $db->fetchSingle();
     
-    if($row){
-        
+    if($row){ //if there is redirect to the customers page with the current customers table, with the alert
         redirect('customers.php');
-        
         keepmsg('<div class="alert alert-danger text-center">
                       <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
                       <strong>Sorry!</strong> Customer Already Exist. Please Register Again
                 </div>');
-        
-    }else{
-    
-    $db->query('INSERT INTO users (id, full_name, email, password, spending) VALUES (NULL, :fullname, :email, :password, :spending) ');
+        } else{
+        //if there is no customer with that email, add the one the user just input 
+        $db->query('INSERT INTO users (id, full_name, email, password, spending) VALUES (NULL, :fullname, :email, :password, :spending) ');
+        $db->bindValue(':fullname', $c_name, PDO::PARAM_STR);
+        $db->bindValue(':email', $c_email, PDO::PARAM_STR);
+        $db->bindValue(':password', $hashed_pass, PDO::PARAM_STR);
+        $db->bindValue(':spending', $c_amount, PDO::PARAM_INT);
+        $run_user = $db->execute();
+                if($run_user){ //if the insert runs successfully, th customer has been added, then tell them it worked
+                    redirect('customers.php');
+                    keepmsg('<div class="alert alert-success text-center">
+                                  <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                                  <strong>Success!</strong> Customer registered successfully.
+                            </div>');
 
-    $db->bindValue(':fullname', $c_name, PDO::PARAM_STR);
-    $db->bindValue(':email', $c_email, PDO::PARAM_STR);
-    $db->bindValue(':password', $hashed_pass, PDO::PARAM_STR);
-    $db->bindValue(':spending', $c_amount, PDO::PARAM_INT);
-
-    $run_user = $db->execute();
-
-
-    if($run_user){
-        
-        redirect('customers.php');
-
-        keepmsg('<div class="alert alert-success text-center">
-                      <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                      <strong>Success!</strong> Customer registered successfully.
-                </div>');
-
-    }else{
-        
-         keepmsg('<div class="alert alert-danger text-center">
-                      <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-                      <strong>Sorry!</strong> Customer could not be registered.
-                </div>');
-    }    
-
-  }
-
+                              } else{ //if the insert didnt work, tell them sorry, no can do MF
+                                  keepmsg('<div class="alert alert-danger text-center">
+                                                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                                                <strong>Sorry!</strong> Customer could not be registered.
+                                          </div>');
+                                  }   
+     }
 }
 
-
 ?>
-
-  
     <div class="row">
       <div class="col-md-4 col-md-offset-4">
           <p class="pull-right" style="color:#777"> Adding Customer in Database</p><br>
@@ -134,14 +101,12 @@ if(isset($_POST['submit_user'])){
           <div class="form-group"> 
             <div class="col-sm-offset-2 col-sm-10 text-center">
               <button type="submit" class="btn btn-primary pull-right" name="submit_user">Register</button>
-              <a class="pull-left btn btn-danger" href="customers.php"> Cancel</a>
+               <a class="pull-left btn btn-danger" href="customers.php"> Cancel</a>
             </div>
           </div>
-</form>
-          
-  </div>
-</div>
-          
+       </form>     
+      </div>
+    </div>      
   </div>
 </div>
   
