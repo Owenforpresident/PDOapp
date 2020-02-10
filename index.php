@@ -40,7 +40,7 @@ if(isset($_POST['submit_login'])){ //if they click login (pulled from HTML name)
                       <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
                       <strong>Welcome </strong>' . $d_name . ' You are logged in as Admin 
                 </div>');      
-              } else{       
+              } else{       //if not row, means there is no user by that email and password in the DB so tell them to fuck off
                     echo '<div class="alert alert-danger text-center">
                         <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
                         <strong>Sorry!</strong> User does not exist. Register or Try Again

@@ -84,7 +84,7 @@ if($row){
                                     <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
                                     <div class="clearfix"></div>
                                 </div>
-                            </a>
+                            </a
                         </div>
                     </div>';
     }

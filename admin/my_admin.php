@@ -70,7 +70,7 @@ $row = $db->fetchSingle();
        <div class="col-md-3">
            <div style="padding: 20px;">
              <div class="thumbnail" >
-              <a href="edit_admin.php?admin_id=<?php echo $row['id'] ?>">
+              <a href="edit_admin.php?admin_id=<?php echo $row['id'] //if this is clicked on send them to edit admin with their id on the query string?>">
                    <?php  $image = $row['image']; ?>
                 <?php echo ' <img src="uploaded_image/' . $image . '"  style="width:150px;height:150px">'; ?> 
               </a>
@@ -108,7 +108,7 @@ if(isset($_POST['delete_form'])){ //if they click the delete button on the edit 
           $db->query('DELETE FROM admin WHERE id=:id');      //SQL for that id and delete that corresponding user
           $db->bindValue(':id', $id, PDO::PARAM_INT);       //bind id iwth id placeholder
           $run = $db->execute();      
-      if($run){        //if it runs redirect them
+      if($run){        //if it runs redirect them, they have deleted there account, send them through the same logic as logout
           redirect('logout.php');       
           } else{       
               keepmsg('<div class="alert alert-danger text-center">

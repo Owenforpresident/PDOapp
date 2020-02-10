@@ -15,7 +15,7 @@ $(document).ready(function(){
 
 //*********************function to display the report div, SUBMITS TO AJAX_REPORT_MENU.PHP */
 function display_report_menu(){ 
-$.ajax({ //AJAX, takes in 3 args, url, type of request, and a functionto run if successfull
+$.ajax({ //AJAX, takes in 3 args, url, type of request, and a functionto run if successful
     url: 'ajax_report_menu.php?cid=<?php echo $id; ?>', //making a request to this php logic
     type: 'POST', //a post request, cause were sending data, the $id
     success: function(show_report){ //third ARG sent to ajax is a function that runs if the request is successfull
@@ -147,7 +147,7 @@ function display_customer_info(){
         </div>
     </div>              
 <script>                   
-/************** Updating data to database using id, SUBMITS TOAJAX_FORM_POST.PHP ******************/                    
+/************** Updating data to database using id, SUBMITS TO AJAX_FORM_POST.PHP ******************/                    
     $(document).ready(function(){ 
         $("#updatedata").submit(function(stop_default){    //prevent default so the whole page doesnt reload when they click submit                
             stop_default.preventDefault();                           
